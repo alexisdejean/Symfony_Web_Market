@@ -3,18 +3,21 @@
 {% block title %}Hello AboutController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    {{ include('header.html.twig') }}
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/supra/Music/Symfony/Symfony_Web_Market/Symfony_Web_MarketPlace/src/Controller/AboutController.php</code></li>
-        <li>Your template at <code>C:/Users/supra/Music/Symfony/Symfony_Web_Market/Symfony_Web_MarketPlace/templates/about/index.html.twig</code></li>
-    </ul>
-</div>
+    <main class="page-container">
+        <div class="card-wood-frame">
+            <h1 class="page-title">À propos</h1>
+            <div class="paraph_1" style="margin-bottom: 20px;">
+                <h2>Notre entreprise</h2><br>
+                <p>Bienvenue sur notre site de vente en ligne ! Nous sommes une entreprise spécialisée dans la vente de produits de qualité, allant des articles électroniques aux vêtements tendance. Notre objectif est de fournir à nos clients une expérience d'achat agréable et sécurisée.</p>
+                <p>Nous nous engageons à offrir un service client exceptionnel et à répondre rapidement à
+            </div>
+            <div class="paraph_2">
+                <h2>Notre mission</h2><br>
+                <p>toutes vos questions et préoccupations. Nous croyons en la transparence et l'intégrité dans toutes nos transactions, et nous nous efforçons de maintenir des normes élevées de qualité pour tous nos produits.</p>
+                <p>Merci de visiter notre site et de faire confiance à notre entreprise pour vos besoins d'achat en ligne. Nous espérons que vous trouverez ce que vous cherchez et que vous apprécierez votre expérience avec nous !</p>
+            </div>
+        </div>
+    </main>
 {% endblock %}

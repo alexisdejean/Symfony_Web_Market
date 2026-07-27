@@ -1,0 +1,218 @@
+/* =================================================================
+   1. VARIABLES & CONFIGURATION GLOBAL ("Clair et Bois")
+   ================================================================ */
+:root {
+  --bg-color: #FAFAFA;
+  --card-bg: #FFFFFF;
+  --text-main: #2C2C2C;
+  --text-muted: #7A7A7A;
+  --wood-border: #D2B48C;
+  --sage-green: #95B0A6;
+  --sage-hover: #7E9B90;
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+.menu {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.sousmenu a {
+  text-decoration: none;
+  color: var(--text-main);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* =================================================================
+   2. HEADER COMMUN
+   ================================================================ */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 48px;
+  background-color: var(--bg-color);
+  border-bottom: 1px solid rgba(210, 180, 140, 0.2);
+}
+
+.logo {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+nav a {
+  margin: 0 20px;
+  text-decoration: none;
+  color: var(--text-main);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-client {
+  padding: 10px 20px;
+  border: 1px solid var(--wood-border);
+  border-radius: 30px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+/* =================================================================
+   3. SECTIONS & MISES EN PAGE (Structure Asymétrique 66% / 33%)
+   ================================================================ */
+.page-container {
+  max-width: 1300px;
+  margin: 40px auto;
+  padding: 0 24px;
+}
+
+.page-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 40px;
+  color: var(--text-main);
+  letter-spacing: 1px;
+}
+
+.grid-asym {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+/* =================================================================
+   4. COMPOSANTS : CARTES PRODUITS & FORMULAIRES (Effet Bois & Blanc)
+   ================================================================ */
+.card-wood-frame {
+  background-color: var(--card-bg);
+  border: 2px solid var(--wood-border);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid var(--wood-border);
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-main);
+  outline: none;
+}
+
+/* =================================================================
+   5. BOUTON D'ACTION PRINCIPAL (Vert Sage)
+   ================================================================ */
+.btn-primary {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background-color: var(--sage-green);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 30px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--sage-hover);
+}
+
+/* =================================================================
+   6. PANIER & TUNNEL DE PAIEMENT (Spécifique Page 4)
+   ================================================================ */
+.cart-item-card {
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--wood-border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.cart-item-img {
+  width: 90px;
+  height: 90px;
+  background: #F4F1EA;
+  border-radius: 8px;
+  margin-right: 20px;
+  object-fit: contain;
+}
+
+.checkout-sidebar {
+  background-color: #F7F5F0;
+  border: 1px solid var(--wood-border);
+  border-radius: 16px;
+  padding: 24px;
+  position: sticky;
+  top: 20px;
+}
+
+.floating-chat {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: var(--sage-green);
+  color: white;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
