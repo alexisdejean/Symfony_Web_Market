@@ -48,5 +48,13 @@
 # Backup entities generated with doctrine:generate:entities command
 **/Entity/*~
 
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.dist
+.env.local
+.env.*.local
+
 # Embedded web-server pid file
 /.web-server-pid
