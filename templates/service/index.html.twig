@@ -1,11 +1,67 @@
-{% extends 'base.html.twig' %}
+    {% extends 'base.html.twig' %}
 
-{% block title %}Hello ServiceController!{% endblock %}
+    {% block title %}Services{% endblock %}
 
-{% block body %}
-    {{ include('header.html.twig') }}
+    {% block body %}
+        {{ include('header.html.twig') }}
 
-    <main class="page-container">
-        
-    </main>
-{% endblock %}
+        <main class="page-container">
+            <div class="produit-filtres">
+                <form action="{{ path('home_page') }}" method="get">
+                    <label for="forme">Forme :</label>
+                    <select name="categorie" id="categorie">
+                        <option value="">Toutes</option>
+                        <option value="cat1">Forme 1</option>
+                        <option value="cat2">Forme 2</option>
+                        <option value="cat3">Forme 3</option>
+                    </select>
+
+                    <label for="matiere">Matière :</label>
+                    <select name="matiere" id="matiere">
+                        <option value="">Toutes</option>
+                        <option value="mat1">Matière 1</option>
+                        <option value="mat2">Matière 2</option>
+                        <option value="mat3">Matière 3</option>
+                    </select>
+                    <label for="couleur">Couleur :</label>
+                    <select name="couleur" id="couleur">
+                        <option value="">Toutes</option>
+                        <option value="low">Rouge</option>
+                        <option value="medium">Blanc</option>
+                        <option value="high">Noir</option>
+                    </select>
+                    <label for="prix">Prix :</label>
+                    <select name="prix" id="prix">
+                        <option value="">Tous</option>
+                        <option value="low">Moins de 50€</option>
+                        <option value="medium">50€ - 100€</option>
+                        <option value="high">Plus de 100€</option>
+                    </select>
+                    <button type="submit">Filtrer</button>
+                </form>
+            </div>
+            <div class="produits">
+                {% for produit in produits %}
+                    <div class="produit">
+                        {% if produit.image %}
+                            <img src="{{ produit.image }}" alt="{{ produit.nom }}">
+                        {% else %}
+                            <h5>Image indisponible</h5>
+                        {% endif %}
+
+                        <h3>{{ produit.nom }}</h3>
+                        <p>{{ produit.description }}</p>
+                        <p>Prix : {{ produit.prix }}€</p>
+
+                        {% if app.user %}
+                            <button class="add-to-cart" data-produit-id="{{ produit.id }}">Ajouter au panier</button>
+                        {% else %}
+                            <p>Connectez-vous pour ajouter au panier.</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p>Aucun produit trouvé.</p>
+                {% endfor %}
+            </div>
+        </main>
+    {% endblock %}

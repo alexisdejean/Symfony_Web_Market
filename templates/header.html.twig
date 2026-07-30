@@ -5,9 +5,22 @@
     <nav>
         <ul class="menu">
             <li class="sousmenu"><a href="{{ path('home_page') }}">Accueil</a></li>
+            {# Afficher "À propos" uniquement si l'utilisateur a le rôle USER ou ADMIN #}
+            {% if not app.user %}
             <li class="sousmenu"><a href="{{ path('about_page') }}">À propos</a></li>
-            <li class="sousmenu"><a href="{{ path('services_page') }}">Services</a></li>
+            {% endif %}
+            <li class="sousmenu"><a href="{{ path('services_page') }}">Produits</a></li>
+            {% if not app.user or (is_granted('ROLE_USER')) %}
             <li class="sousmenu"><a href="{{ path('contact_page') }}">Contact</a></li>
+            {% endif %}
+            {% if app.user and is_granted('ROLE_USER') %}
+                <li class="sousmenu"><a href="{{ path('logout') }}">Panier</a></li>
+            {% endif %}
+            {% if app.user and is_granted('ROLE_ADMIN') %}
+                <li class="sousmenu"><a href="{{ path('home_page') }}">Admin</a></li>
+            {% endif %}
+            
+            
         </ul>
     </nav>
 

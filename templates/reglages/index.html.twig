@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+    {{ include('header.html.twig') }}
+
+    <main class="page-container">
+        <div class="settings-container">
+            <h1>Paramètres</h1>
+            <div class="settings-options">
+                <h3>Modifier mon profil</h3>
+                    <form action="{{ path('profile_edit') }}" method="get">
+                        <input type="hidden" name="userId" value="">
+                        <input type="email" name="email" value="">
+                        <input type="text" name="username" value="">
+                        <input type="text" name="firstName" value="">
+                        <input type="password" name="password" placeholder="Nouveau mot de passe">
+                        <button type="submit">Modifier</button>
+                    </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}

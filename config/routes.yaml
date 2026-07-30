@@ -26,3 +26,11 @@ login_page:
 signup_page:
     path: /register
     controller: App\Controller\RegistrationController::register
+
+logout:
+    path: /logout
+    controller: App\Controller\SecurityController::logout
+
+profile_edit:
+    path: /profile/edit
+    controller: App\Controller\ProfileController::edit
