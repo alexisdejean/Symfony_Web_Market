@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+    {{ include('header.html.twig') }}
+
+    <main class="page-container">
+        <h1>{{ page_title }}</h1>
+
+        {{ form_start(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.prix) }}
+        <datalist id="couleur-list">
+            {% for value in existing_values.couleur|default([]) %}
+                <option value="{{ value }}">
+            {% endfor %}
+        </datalist>
+
+        <datalist id="matiere-list">
+            {% for value in existing_values.matiere|default([]) %}
+                <option value="{{ value }}">
+            {% endfor %}
+        </datalist>
+
+        <datalist id="forme-list">
+            {% for value in existing_values.forme|default([]) %}
+                <option value="{{ value }}">
+            {% endfor %}
+        </datalist>
+
+        {{ form_row(form.couleur) }}
+        {{ form_row(form.matiere) }}
+        {{ form_row(form.forme) }}
+        {{ form_row(form.image) }}
+        <button type="submit">{{ button_label }}</button>
+        {{ form_end(form) }}
+    </main>
+{% endblock %}

@@ -7,44 +7,51 @@
 
         <main class="page-container">
             <div class="produit-filtres">
-                <form action="{{ path('home_page') }}" method="get">
+                <form action="{{ path('app_service') }}" method="get">
                     <label for="forme">Forme :</label>
-                    <select name="categorie" id="categorie">
+                    <select name="forme" id="forme">
                         <option value="">Toutes</option>
-                        <option value="cat1">Forme 1</option>
-                        <option value="cat2">Forme 2</option>
-                        <option value="cat3">Forme 3</option>
+                        {% for value in filter_values.forme|default([]) %}
+                            <option value="{{ value }}" {% if selected_filters.forme == value %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
                     </select>
 
                     <label for="matiere">Matière :</label>
                     <select name="matiere" id="matiere">
                         <option value="">Toutes</option>
-                        <option value="mat1">Matière 1</option>
-                        <option value="mat2">Matière 2</option>
-                        <option value="mat3">Matière 3</option>
+                        {% for value in filter_values.matiere|default([]) %}
+                            <option value="{{ value }}" {% if selected_filters.matiere == value %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
                     </select>
+
                     <label for="couleur">Couleur :</label>
                     <select name="couleur" id="couleur">
                         <option value="">Toutes</option>
-                        <option value="low">Rouge</option>
-                        <option value="medium">Blanc</option>
-                        <option value="high">Noir</option>
+                        {% for value in filter_values.couleur|default([]) %}
+                            <option value="{{ value }}" {% if selected_filters.couleur == value %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
                     </select>
+
                     <label for="prix">Prix :</label>
                     <select name="prix" id="prix">
                         <option value="">Tous</option>
-                        <option value="low">Moins de 50€</option>
-                        <option value="medium">50€ - 100€</option>
-                        <option value="high">Plus de 100€</option>
+                        <option value="low" {% if selected_filters.prix == 'low' %}selected{% endif %}>Moins de 50€</option>
+                        <option value="medium" {% if selected_filters.prix == 'medium' %}selected{% endif %}>50€ - 100€</option>
+                        <option value="high" {% if selected_filters.prix == 'high' %}selected{% endif %}>Plus de 100€</option>
                     </select>
                     <button type="submit">Filtrer</button>
                 </form>
+                {% if app.user and is_granted('ROLE_ADMIN') %}
+                    <p><a href="{{ path('app_service_add') }}">Ajouter un produit</a></p>
+                {% endif %}
             </div>
             <div class="produits">
+                
+
                 {% for produit in produits %}
                     <div class="produit">
                         {% if produit.image %}
-                            <img src="{{ produit.image }}" alt="{{ produit.nom }}">
+                            <img src="{{ produit.image }}" alt="{{ produit.nom }}" class="service-product-image">
                         {% else %}
                             <h5>Image indisponible</h5>
                         {% endif %}
@@ -53,14 +60,25 @@
                         <p>{{ produit.description }}</p>
                         <p>Prix : {{ produit.prix }}€</p>
 
-                        {% if app.user %}
+                        {% if app.user and is_granted('ROLE_USER') %}
                             <button class="add-to-cart" data-produit-id="{{ produit.id }}">Ajouter au panier</button>
+                        {% elseif app.user and is_granted('ROLE_ADMIN') %}
+                            <div class="btns_actions_admin">
+                                <a href="{{ path('app_service_update', {'id_produit': produit.id}) }}">Modifier</a>
+                                <form action="{{ path('app_service_delete', {'id_produit': produit.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+                                    <button type="submit">Supprimer</button>
+                                </form>
+                            </div>
+
                         {% else %}
-                            <p>Connectez-vous pour ajouter au panier.</p>
+                            <p class="message_connexion">Veuillez vous connecter pour ajouter au panier.</p>
                         {% endif %}
                     </div>
-                {% else %}
-                    <p>Aucun produit trouvé.</p>
+                    {% else %}
+                        <p>Aucun produit disponible.</p>
+                    
                 {% endfor %}
             </div>
         </main>
