@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GestionUserController!{% endblock %}
+
+{% block body %}
+ {{ include('header.html.twig') }}
+
+
+<div class="example-wrapper">
+    <h1>Gérer les utilisateurs</h1>
+
+    <div class="gestion_user">
+    {% for user in users %}
+        <div class="user-card">
+            <p><strong>Nom :</strong> {{ user.nom != '' ? user.nom : 'Non spécifié' }}</p>
+            <p><strong>Prénom :</strong> {{ user.prenom != '' ? user.prenom : 'Non spécifié' }}</p>
+            <p><strong>Identifiant :</strong> {{ user.identifiant }}</p>
+            <p><strong>Email :</strong> {{ user.email }}</p>
+            <p><strong>Rôle :</strong> {{ user.roles|join(', ') }}</p>
+            <p><strong>Date d'inscription :</strong> {{ user.dateInscription|date('d/m/Y H:i') }}</p>
+            <p><strong>Status :</strong> {% if user.status == 0 %} Actif {% else %} Bloqué {% endif %}</p>
+            <a href="{{ path('app_gestion_user_edit', {'id': user.id}) }}">Modifier</a>
+            {% if user.status == 0 %}
+                <form action="{{ path('app_gestion_user_block', {'id': user.id}) }}" method="post">
+                    <input type="hidden" name="_token" value="{{ csrf_token('block_user_' ~ user.id) }}">
+                    <button type="submit">Bloquer</button>
+                </form>
+            {% elseif user.status == 1 %}
+                <form action="{{ path('app_gestion_user_unblock', {'id': user.id}) }}" method="post">
+                    <input type="hidden" name="_token" value="{{ csrf_token('unblock_user_' ~ user.id) }}">
+                    <button type="submit">Débloquer</button>
+                </form>
+            {% else %}
+            <p>Action indisponible</p>
+            {% endif %}
+            <form action="{{ path('app_gestion_user_delete', {'id': user.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
+                <button type="submit">Supprimer</button>
+            </form>
+        </div>
+    {% else %}
+        <p>Aucun utilisateur trouvé.</p>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

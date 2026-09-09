@@ -61,7 +61,10 @@
                         <p>Prix : {{ produit.prix }}€</p>
 
                         {% if app.user and is_granted('ROLE_USER') %}
-                            <button class="add-to-cart" data-produit-id="{{ produit.id }}">Ajouter au panier</button>
+                            <form action="{{ path('app_panier_ajouter', {'id': produit.id}) }}" method="post">
+                                <input type="hidden" name="_token" value="{{ csrf_token('add_to_cart_' ~ produit.id) }}">
+                                <button type="submit" class="add-to-cart">Ajouter au panier</button>
+                            </form>
                         {% elseif app.user and is_granted('ROLE_ADMIN') %}
                             <div class="btns_actions_admin">
                                 <a href="{{ path('app_service_update', {'id_produit': produit.id}) }}">Modifier</a>

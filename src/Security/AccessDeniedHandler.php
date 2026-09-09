@@ -18,6 +18,6 @@ class AccessDeniedHandler implements AccessDeniedHandlerInterface
     public function handle(Request $request, AccessDeniedException $accessDeniedException): ?RedirectResponse
     {
         
-        return new RedirectResponse($this->urlGenerator->generate('services_page'));
+        return new RedirectResponse($this->urlGenerator->generate('home_page'));
     }
 }   

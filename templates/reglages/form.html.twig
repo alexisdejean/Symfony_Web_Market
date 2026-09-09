@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+    {{ include('header.html.twig') }}
+
+    <main class="page-container">
+        <h1>{{ page_title }}</h1>
+
+        {{ form_start(form) }}
+        {{ form_row(form.identifiant) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.nom, {'value': form.nom.vars.value ?: 'Non défini'}) }}     
+        {{ form_row(form.prenom, {'value': form.prenom.vars.value ?: 'Non défini'}) }} 
+        {{ form_row(form.plainPassword) }}
+
+        <button type="submit">{{ button_label }}</button>
+        {{ form_end(form) }}
+
+        <div class="logout">
+            <button class="btn-client" onclick="window.location.href='{{ path('logout') }}'">Logout</button>
+        </div>
+    </main>
+{% endblock %}

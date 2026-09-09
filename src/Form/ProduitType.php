@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class ProduitType extends AbstractType
 {
@@ -47,6 +48,13 @@ class ProduitType extends AbstractType
                 'label' => 'Image',
                 'required' => false,
                 'mapped' => false,
+                'constraints' => [
+                    new File(
+                        maxSize: '2M',
+                        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+                        mimeTypesMessage: 'Veuillez sélectionner une image JPEG, PNG ou WebP.',
+                    ),
+                ],
                 'attr' => ['accept' => 'image/*'],
             ])
         ;

@@ -3,18 +3,27 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_IDENTIFIANT', fields: ['identifiant'])]
 #[UniqueEntity(fields: ['identifiant'], message: 'There is already an account with this identifiant')]
-
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public function __construct()
+    {
+        $this->date_inscription = new \DateTimeImmutable();
+        $this->status = false;
+        $this->role = 0;
+        $this->isVerified = true;
+        $this->contacts = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -26,21 +35,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     private ?string $identifiant = null;
 
-    /**
-        * 0 = utilisateur
-        * 1 = administrateur
- */
     #[ORM\Column(options: ['default' => 0])]
     private int $role = 0;
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
     #[ORM\Column]
     private bool $isVerified = true;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $prenom = null;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $status = false;
+
+    #[ORM\Column]
+    private \DateTimeImmutable $date_inscription;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Contact::class)]
+    private Collection $contacts;
+
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: Panier::class, cascade: ['persist', 'remove'])]
+    private ?Panier $panier = null;
 
     public function getId(): ?int
     {
@@ -58,6 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -69,47 +90,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
+
     public function getUserIdentifier(): string
     {
         return (string) $this->identifiant;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
-{
-    return match ($this->role) {
-        1 => ['ROLE_ADMIN'],
-        default => ['ROLE_USER'],
-    };
-}
+    {
+        return match ($this->role) {
+            1 => ['ROLE_ADMIN'],
+            default => ['ROLE_USER'],
+        };
+    }
 
-    /**
- * Retourne le rôle numérique de l'utilisateur
- * 0 = utilisateur
- * 1 = administrateur
- */
     public function getRole(): int
-{
-    return $this->role;
-}
+    {
+        return $this->role;
+    }
 
-public function setRole(int $role): static
-{
-    $this->role = $role;
+    public function setRole(int $role): static
+    {
+        $this->role = $role;
 
-    return $this;
-}
+        return $this;
+    }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -122,13 +128,10 @@ public function setRole(int $role): static
         return $this;
     }
 
-    /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
-     */
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
 
         return $data;
     }
@@ -136,7 +139,6 @@ public function setRole(int $role): static
     #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // @deprecated, to be removed when upgrading to Symfony 8
     }
 
     public function isVerified(): bool
@@ -147,6 +149,103 @@ public function setRole(int $role): static
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(string $prenom): static
+    {
+        $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    public function isStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getDateInscription(): ?\DateTimeImmutable
+    {
+        return $this->date_inscription;
+    }
+
+    public function setDateInscription(\DateTimeImmutable $date_inscription): static
+    {
+        $this->date_inscription = $date_inscription;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contact>
+     */
+    public function getContacts(): Collection
+    {
+        return $this->contacts;
+    }
+
+    public function addContact(Contact $contact): static
+    {
+        if (!$this->contacts->contains($contact)) {
+            $this->contacts->add($contact);
+            $contact->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContact(Contact $contact): static
+    {
+        if ($this->contacts->removeElement($contact)) {
+            if ($contact->getUser() === $this) {
+                $contact->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPanier(): ?Panier
+    {
+        return $this->panier;
+    }
+
+    public function setPanier(?Panier $panier): static
+    {
+        if ($panier === null && $this->panier !== null) {
+            $this->panier->setUser(null);
+        }
+
+        if ($panier !== null && $panier->getUser() !== $this) {
+            $panier->setUser($this);
+        }
+
+        $this->panier = $panier;
 
         return $this;
     }

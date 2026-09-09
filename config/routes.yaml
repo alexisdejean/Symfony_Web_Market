@@ -34,3 +34,5 @@ logout:
 profile_edit:
     path: /profile/edit
     controller: App\Controller\ProfileController::edit
+
+    

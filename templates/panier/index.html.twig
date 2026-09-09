@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon panier{% endblock %}
+
+{% block body %}
+{{ include('header.html.twig') }}
+
+
+<main class="page-container">
+    <h1>Mon panier</h1>
+
+    {% for message in app.flashes('error') %}
+        <p class="alert alert-danger">{{ message }}</p>
+    {% endfor %}
+
+    {% if panier and panier.contenus|length > 0 %}
+        <div class="panier">
+            {% for contenu in panier.contenus %}
+                <article class="panier-ligne">
+                    <h2>{{ contenu.produit.nom }}</h2>
+                    <p>Prix unitaire : {{ contenu.produit.prix }} €</p>
+                    <form action="{{ path('app_panier_modifier', {'id': contenu.id}) }}" method="post">
+                        <input type="hidden" name="_token" value="{{ csrf_token('update_cart_' ~ contenu.id) }}">
+                        <label>
+                            Quantité
+                            <input type="number" name="quantite" value="{{ contenu.quantite }}" min="1" max="{{ contenu.produit.stock }}">
+                        </label>
+                        <button type="submit">Mettre à jour</button>
+                    </form>
+                    <p>Sous-total : {{ (contenu.produit.prix * contenu.quantite)|number_format(2, ',', ' ') }} €</p>
+                    <form action="{{ path('app_panier_supprimer', {'id': contenu.id}) }}" method="post">
+                        <input type="hidden" name="_token" value="{{ csrf_token('remove_from_cart_' ~ contenu.id) }}">
+                        <button type="submit">Supprimer</button>
+                    </form>
+                </article>
+            {% endfor %}
+        </div>
+        <p><strong>Total : {{ total|number_format(2, ',', ' ') }} €</strong></p>
+    {% else %}
+        <p>Ton panier est vide.</p>
+    {% endif %}
+</div>
+{% endblock %}

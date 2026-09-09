@@ -93,10 +93,14 @@ final class ServiceController extends AbstractController
         ]);
     }
 
-    #[Route('/service/delete/{id_produit}', name: 'app_service_delete', methods: ['POST', 'DELETE', 'GET'])]
-    public function deleteProduit(EntityManagerInterface $entityManager, int $id_produit): Response
+    #[Route('/service/delete/{id_produit}', name: 'app_service_delete', methods: ['POST'])]
+    public function deleteProduit(Request $request, EntityManagerInterface $entityManager, int $id_produit): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if (!$this->isCsrfTokenValid('delete' . $id_produit, (string) $request->request->get('_token', ''))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
 
         $produit = $entityManager->getRepository(Produits::class)->find($id_produit);
         if (!$produit) {

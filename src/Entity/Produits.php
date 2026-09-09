@@ -3,11 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\ProduitsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProduitsRepository::class)]
 class Produits
 {
+    public function __construct()
+    {
+        $this->panierContenus = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -15,12 +22,12 @@ class Produits
 
     #[ORM\Column]
     private ?float $prix = null;
-    
-        #[ORM\Column(length: 255)]
-        private ?string $nom = null;
-    
-        #[ORM\Column(type: 'text')]
-        private ?string $description = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $nom = null;
+
+    #[ORM\Column(type: 'text')]
+    private ?string $description = null;
 
     #[ORM\Column(length: 255)]
     private ?string $couleur = null;
@@ -33,6 +40,15 @@ class Produits
 
     #[ORM\Column(length: 255)]
     private ?string $image = null;
+
+    #[ORM\Column]
+    private ?int $stock = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $date_insertion = null;
+
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: PanierContenu::class)]
+    private Collection $panierContenus;
 
     public function getId(): ?int
     {
@@ -119,6 +135,59 @@ class Produits
     public function setImage(string $image): static
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getStock(): ?int
+    {
+        return $this->stock;
+    }
+
+    public function setStock(int $stock): static
+    {
+        $this->stock = $stock;
+
+        return $this;
+    }
+
+    public function getDateInsertion(): ?\DateTimeImmutable
+    {
+        return $this->date_insertion;
+    }
+
+    public function setDateInsertion(\DateTimeImmutable $date_insertion): static
+    {
+        $this->date_insertion = $date_insertion;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PanierContenu>
+     */
+    public function getPanierContenus(): Collection
+    {
+        return $this->panierContenus;
+    }
+
+    public function addPanierContenu(PanierContenu $panierContenu): static
+    {
+        if (!$this->panierContenus->contains($panierContenu)) {
+            $this->panierContenus->add($panierContenu);
+            $panierContenu->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removePanierContenu(PanierContenu $panierContenu): static
+    {
+        if ($this->panierContenus->removeElement($panierContenu)) {
+            if ($panierContenu->getProduit() === $this) {
+                $panierContenu->setProduit(null);
+            }
+        }
 
         return $this;
     }

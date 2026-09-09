@@ -205,3 +205,28 @@ img.service-product-image {
 .message_connexion{
   padding: 10px;
 }
+
+.admin-panel{
+  display: block  ;
+  align-items: center;
+}
+
+.contact_messages{
+  float: right;
+  top: 0;
+  margin-right: 2em;
+}
+
+.gestion_user{
+  margin-top: 2em;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.user-card{
+  border:1px solid black;
+  margin: auto;
+  padding:2em;
+  display: flex;
+  flex-direction: column;
+}

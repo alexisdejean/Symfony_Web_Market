@@ -9,15 +9,16 @@
             {% if not app.user %}
             <li class="sousmenu"><a href="{{ path('about_page') }}">À propos</a></li>
             {% endif %}
-            <li class="sousmenu"><a href="{{ path('services_page') }}">Produits</a></li>
+            
             {% if not app.user or (is_granted('ROLE_USER')) %}
             <li class="sousmenu"><a href="{{ path('contact_page') }}">Contact</a></li>
+            <li class="sousmenu"><a href="{{ path('services_page') }}">Produits</a></li>
             {% endif %}
             {% if app.user and is_granted('ROLE_USER') %}
-                <li class="sousmenu"><a href="{{ path('logout') }}">Panier</a></li>
+                <li class="sousmenu"><a href="{{ path('app_panier') }}">Panier</a></li>
             {% endif %}
             {% if app.user and is_granted('ROLE_ADMIN') %}
-                <li class="sousmenu"><a href="{{ path('home_page') }}">Admin</a></li>
+                <li class="sousmenu"><a href="{{ path('app_admin') }}">Admin</a></li>
             {% endif %}
             
             
@@ -26,7 +27,7 @@
 
     <div class="header-actions">
         {% if app.user %}
-            <button class="btn-client">Settings</button>
+            <button class="btn-client" onclick="window.location.href='{{ path('app_reglages', {'id_compte': app.user.id}) }}'">Settings</button>
         {% else %}
             <button class="btn-client" onclick="window.location.href='{{ path('login_page') }}'">Login</button>
         {% endif %}   
