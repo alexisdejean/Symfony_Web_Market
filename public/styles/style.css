@@ -60,8 +60,8 @@ a {
 
 .logo img {
   display: block;
-  width: auto;
-  max-height: 50px;
+  width: 8em;
+  max-height: 100px;
 }
 
 .menu {
@@ -117,6 +117,16 @@ a {
   margin: 40px auto;
 }
 
+h2 {
+  margin: 0 0 18px;
+  color: var(--text-main);
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+
 .page-title {
   margin: 0 0 24px;
   color: var(--text-main);
@@ -133,10 +143,29 @@ a {
 }
 
 .page-image {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: auto;
+  min-height: 30em;
   border-radius: 12px;
+  padding: 2rem;
+  background-image: url('../banniere.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.page-image h2 {
+  margin: 0;
+  max-width: 700px;
+  color: #ffffff;
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3vw, 44px);
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
 }
 
 .btn.btn-primary {
@@ -155,8 +184,8 @@ a {
 
 .produits {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
   width: 100%;
   margin-top: 1.5em;
   padding: 1em;
@@ -201,13 +230,13 @@ a {
   margin: 12px 16px 4px;
   color: var(--text-main);
   font-family: var(--font-serif);
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .produit > p {
   margin: 4px 16px;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .produit > p:last-of-type {
@@ -219,7 +248,7 @@ img.service-product-image,
 .panier-produit-image {
   display: block;
   width: 100%;
-  height: 220px;
+  height: 180px;
   flex-shrink: 0;
   margin-bottom: 8px;
   border-radius: 0;
@@ -456,6 +485,222 @@ form[name='registration_form'] input[type='password']:focus {
   outline: none;
   border-color: var(--sage-green);
   box-shadow: 0 0 0 4px rgba(149, 176, 166, 0.22);
+}
+
+.password-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: -2px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.password-toggle__checkbox {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--sage-green);
+  cursor: pointer;
+}
+
+.password-toggle__label {
+  margin: 0;
+  color: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.password-toggle__checkbox:focus-visible {
+  outline: 3px solid rgba(149, 176, 166, 0.35);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .site-header {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px 24px;
+  }
+
+  .menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 20px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .page-container {
+    width: min(100% - 24px, 1200px);
+    margin: 28px auto;
+  }
+
+  .card-wood-frame {
+    padding: 20px;
+  }
+
+  .page-image {
+    min-height: 22em;
+    padding: 1.5rem;
+  }
+
+  #page_contact {
+    grid-template-columns: 1fr;
+  }
+
+  .infos_vendeur {
+    padding: 28px 24px;
+  }
+
+  .form-login {
+    width: min(100%, 500px);
+    margin: 40px auto;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 15px;
+  }
+
+  .site-header {
+    gap: 18px;
+    padding: 18px 16px;
+  }
+
+  .logo img {
+    width: 6.5em;
+  }
+
+  .menu {
+    gap: 8px 16px;
+  }
+
+  .sousmenu a {
+    font-size: 12px;
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
+
+  .btn-client,
+  .btn.btn-primary {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+
+  .page-container {
+    width: min(100% - 18px, 1200px);
+    margin: 18px auto;
+  }
+
+  .page-image {
+    min-height: 18em;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .page-image h2 {
+    font-size: clamp(22px, 7vw, 32px);
+    max-width: 100%;
+  }
+
+  h2 {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  .card-wood-frame {
+    padding: 12px;
+  }
+
+  .produits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 1em;
+    padding: 0.5em;
+  }
+
+  .produit h3 {
+    font-size: 16px;
+  }
+
+  .produit > p {
+    font-size: 12px;
+  }
+
+  img.service-product-image,
+  .panier-produit-image {
+    height: 150px;
+  }
+
+  .pagination {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .settings-container,
+  main.page-container:has(.logout) > form {
+    padding: 22px 18px;
+  }
+
+  .form-login {
+    width: min(100%, 100%);
+    margin: 24px auto 30px;
+    padding: 20px 16px;
+    border-radius: 14px;
+  }
+
+  .form-login h1,
+  body:has(form[name='registration_form']) > h1,
+  .settings-container > h1 {
+    font-size: 28px;
+  }
+
+  .contact-form {
+    padding: 20px 16px;
+  }
+
+  .infos_vendeur h2 {
+    font-size: 24px;
+  }
+
+  .infos_vendeur ul li {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .produits {
+    grid-template-columns: 1fr;
+  }
+
+  .header-actions {
+    flex-direction: column;
+  }
+
+  .page-image {
+    min-height: 15em;
+  }
+
+  .btn-client,
+  .btn.btn-primary {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+
+  .settings-options button,
+  .settings-options input {
+    min-height: 42px;
+  }
 }
 
 .form-login .btn,
@@ -1190,4 +1435,20 @@ footer,
   .site-footer {
     padding: 20px 12px;
   }
+}
+
+.footer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.footer ul{
+  margin-inline: auto;
+  list-style: none;
+}
+
+p{
+  display: flex;
+  justify-content: center;
 }
