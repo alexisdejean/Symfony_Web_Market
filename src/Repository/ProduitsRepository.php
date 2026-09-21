@@ -15,6 +15,28 @@ class ProduitsRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Produits::class);
     }
+
+    /**
+     * @return string[]
+     */
+    public function findDistinctValues(string $field): array
+    {
+        $allowedFields = ['forme', 'matiere', 'couleur'];
+        if (!in_array($field, $allowedFields, true)) {
+            throw new \InvalidArgumentException('Filtre produit invalide.');
+        }
+
+        $rows = $this->createQueryBuilder('p')
+            ->select(sprintf('DISTINCT p.%s AS value', $field))
+            ->andWhere(sprintf('p.%s IS NOT NULL', $field))
+            ->andWhere(sprintf('p.%s <> :empty', $field))
+            ->setParameter('empty', '')
+            ->orderBy(sprintf('p.%s', $field), 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_values(array_filter(array_column($rows, 'value')));
+    }
     
 
     //    /**

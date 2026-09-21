@@ -21,6 +21,8 @@ final class ServiceController extends AbstractController
         $matiere = $request->query->get('matiere');
         $couleur = $request->query->get('couleur');
         $prix = $request->query->get('prix');
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 24;
 
         $qb = $produitsRepository->createQueryBuilder('p');
 
@@ -44,11 +46,24 @@ final class ServiceController extends AbstractController
             $qb->andWhere('p.prix > 100');
         }
 
-        $produits = $qb->getQuery()->getResult();
+        $total = (int) (clone $qb)->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
+        $produits = $qb
+            ->orderBy('p.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
 
         return $this->render('service/index.html.twig', [
             'produits' => $produits,
-            'filter_values' => $this->getExistingValues($produitsRepository),
+            'filter_values' => [
+                'matiere' => $produitsRepository->findDistinctValues('matiere'),
+                'couleur' => $produitsRepository->findDistinctValues('couleur'),
+                'forme' => $produitsRepository->findDistinctValues('forme'),
+            ],
+            'page' => $page,
+            'pages' => max(1, (int) ceil($total / $limit)),
+            'total' => $total,
             'selected_filters' => [
                 'forme' => $forme,
                 'matiere' => $matiere,
@@ -89,7 +104,7 @@ final class ServiceController extends AbstractController
             'form' => $form->createView(),
             'page_title' => 'Ajouter un produit',
             'button_label' => 'Ajouter',
-            'existing_values' => $this->getExistingValues($produitsRepository),
+            'existing_values' => $this->getFilterValues($produitsRepository),
         ]);
     }
 
@@ -146,7 +161,7 @@ final class ServiceController extends AbstractController
             'form' => $form->createView(),
             'page_title' => 'Modifier un produit',
             'button_label' => 'Enregistrer',
-            'existing_values' => $this->getExistingValues($entityManager->getRepository(Produits::class)),
+            'existing_values' => $this->getFilterValues($entityManager->getRepository(Produits::class)),
         ]);
     }
 
@@ -165,14 +180,12 @@ final class ServiceController extends AbstractController
         return 'uploads/products/'.$fileName;
     }
 
-    private function getExistingValues(ProduitsRepository $produitsRepository): array
+    private function getFilterValues(ProduitsRepository $produitsRepository): array
     {
-        $produits = $produitsRepository->findAll();
-
         return [
-            'matiere' => array_values(array_unique(array_filter(array_map(static fn (Produits $produit): ?string => $produit->getMatiere(), $produits)))),
-            'couleur' => array_values(array_unique(array_filter(array_map(static fn (Produits $produit): ?string => $produit->getCouleur(), $produits)))),
-            'forme' => array_values(array_unique(array_filter(array_map(static fn (Produits $produit): ?string => $produit->getForme(), $produits)))),
+            'matiere' => $produitsRepository->findDistinctValues('matiere'),
+            'couleur' => $produitsRepository->findDistinctValues('couleur'),
+            'forme' => $produitsRepository->findDistinctValues('forme'),
         ];
     }
 }

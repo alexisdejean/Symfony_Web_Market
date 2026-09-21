@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello GestionUserController!{% endblock %}
+{% block title %}Gestion Utilisateurs{% endblock %}
 
 {% block body %}
  {{ include('header.html.twig') }}
@@ -42,5 +42,16 @@
         <p>Aucun utilisateur trouvé.</p>
     {% endfor %}
     </div>
+    {% if pages > 1 %}
+        <nav class="pagination" aria-label="Pagination des utilisateurs">
+            {% if page > 1 %}
+                <a href="{{ path('app_gestion_user', {page: page - 1}) }}">Précédent</a>
+            {% endif %}
+            <span>Page {{ page }} sur {{ pages }} ({{ total }} utilisateurs)</span>
+            {% if page < pages %}
+                <a href="{{ path('app_gestion_user', {page: page + 1}) }}">Suivant</a>
+            {% endif %}
+        </nav>
+    {% endif %}
 </div>
 {% endblock %}

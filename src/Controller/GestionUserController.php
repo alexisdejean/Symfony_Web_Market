@@ -13,14 +13,29 @@ use Symfony\Component\Routing\Attribute\Route;
 final class GestionUserController extends AbstractController
 {
     #[Route('/gestion/user', name: 'app_gestion_user')]
-    public function index(UserRepository $userRepository): Response
+    public function index(UserRepository $userRepository, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $users = $userRepository->findAll();
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 25;
+        $queryBuilder = $userRepository->createQueryBuilder('u');
+        $total = (int) (clone $queryBuilder)
+            ->select('COUNT(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+        $users = $queryBuilder
+            ->orderBy('u.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
 
         return $this->render('gestion_user/index.html.twig', [
             'controller_name' => 'GestionUserController',
             'users' => $users,
+            'page' => $page,
+            'pages' => max(1, (int) ceil($total / $limit)),
+            'total' => $total,
         ]);
     }
     #[Route('/gestion/user/delete/{id}', name: 'app_gestion_user_delete', methods: ['POST'])]

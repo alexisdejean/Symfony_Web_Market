@@ -76,7 +76,7 @@
                             </div>
 
                         {% else %}
-                            <p class="message_connexion">Veuillez vous connecter pour ajouter au panier.</p>
+                            <p class="message_connexion">Consultation uniquement</p>
                         {% endif %}
                     </div>
                     {% else %}
@@ -84,5 +84,29 @@
                     
                 {% endfor %}
             </div>
+
+            {% if pages > 1 %}
+                <nav class="pagination" aria-label="Pagination des produits">
+                    {% if page > 1 %}
+                        <a href="{{ path('app_service', {
+                            page: page - 1,
+                            forme: selected_filters.forme,
+                            matiere: selected_filters.matiere,
+                            couleur: selected_filters.couleur,
+                            prix: selected_filters.prix
+                        }) }}">Précédent</a>
+                    {% endif %}
+                    <span>Page {{ page }} sur {{ pages }} ({{ total }} produits)</span>
+                    {% if page < pages %}
+                        <a href="{{ path('app_service', {
+                            page: page + 1,
+                            forme: selected_filters.forme,
+                            matiere: selected_filters.matiere,
+                            couleur: selected_filters.couleur,
+                            prix: selected_filters.prix
+                        }) }}">Suivant</a>
+                    {% endif %}
+                </nav>
+            {% endif %}
         </main>
     {% endblock %}

@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ContactController!{% endblock %}
+{% block title %}Contact{% endblock %}
 
 {% block body %}
     {{ include('header.html.twig') }}
 
     {{ message_fonctionnel }}
-    <main class="page-container">
-            <h1 class="page-title">Contact</h1>
+    <h1 class="page-title">Contact</h1> 
+    <main class="page-container" id="page_contact">
+            
             
             {{ form_start(form, {'action': path('app_contact_submit'), 'attr': {'class': 'contact-form'}}) }}
                 {{ form_row(form.identifiant_user) }}
@@ -19,9 +20,9 @@
         <div class="infos_vendeur">
         <h2>Titre</h2>
             <ul>
-                <li></li>
-                <li></li>
-                <li></li>
+                <li>Abracadabra</li>
+                <li>Bobidibou</li>
+                <li>Clapipatop</li>
             </ul>
             <img src="https://placehold.co/200x200" alt="image_illustration_vendeur">
         </div>

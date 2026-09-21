@@ -3,7 +3,22 @@
 {% block title %}Connexion{% endblock %}
 
 {% block body %}
-<form method="post">
+<form method="post" action="{{ path('app_login') }}" class="form-login">
+    {% if app.flashes('success') %}
+        <div class="alert alert-success">
+            {% for message in app.flashes('success') %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if app.flashes('error') %}
+        <div class="alert alert-danger">
+            {% for message in app.flashes('error') %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
@@ -24,5 +39,7 @@
     <button class="btn btn-lg btn-primary" type="submit">
         Sign in
     </button>
+
+    <a href="{{ path('app_register') }}">S'inscire</a>
 </form>
 {% endblock %}

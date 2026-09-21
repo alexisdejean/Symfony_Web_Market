@@ -17,6 +17,9 @@
         <div class="panier">
             {% for contenu in panier.contenus %}
                 <article class="panier-ligne">
+                    {% if contenu.produit.image %}
+                        <img src="{{ contenu.produit.image }}" alt="{{ contenu.produit.nom }}" class="panier-produit-image">
+                    {% endif %}
                     <h2>{{ contenu.produit.nom }}</h2>
                     <p>Prix unitaire : {{ contenu.produit.prix }} €</p>
                     <form action="{{ path('app_panier_modifier', {'id': contenu.id}) }}" method="post">

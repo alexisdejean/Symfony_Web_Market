@@ -8,27 +8,49 @@
 
 <div class="admin-panel">
     <h1>Bienvenue sur votre panel d'administration</h1>
-        <div class="actions_admins">
-            <p>Vous pouvez gérer les produits, les utilisateurs et d'autres aspects de votre site web à partir de ce panneau.</p>
-            <ul>
-                <li><a href="{{ path('app_service') }}">Gérer les produits</a></li>
-                <li><a href="{{ path('app_gestion_user') }}">Gérer les utilisateurs</a></li>
-                {# Ajoutez d'autres liens vers des fonctionnalités d'administration ici #} 
-            </ul>
-        </div>
-        <div class="contact_messages">
-            <h2>Messages de contact</h2>
-            <ul>
-                {% for message in contact_messages %}
-                    <li>
-                        <strong>{{ message.identifiantUser }} ({{ message.emailUser }})</strong><br>
-                        {{ message.message }}<br>
-                        <em>Envoyé le {{ message.dateEnvoi|date('d/m/Y H:i') }}</em>
-                    </li>
-                {% else %}
-                    <li>Aucun message de contact pour le moment.</li>
-                {% endfor %}
-            </ul>
-        
+    <div class="admin-columns">
+        <section class="admin-management" aria-labelledby="admin-management-title">
+            <h2 id="admin-management-title">Gestion</h2>
+            <div class="actions_admins">
+                <p>Accéder aux espaces de gestion du catalogue et des comptes.</p>
+                <ul>
+                    <li><a href="{{ path('app_service') }}">Gérer les produits</a></li>
+                    <li><a href="{{ path('app_gestion_user') }}">Gérer les utilisateurs</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <details class="contact_messages" open>
+            <summary>Messages de contact <span>{{ total }}</span></summary>
+            <div class="contact_messages_content">
+                <ul>
+                    {% for message in contact_messages %}
+                        <li>
+                            <strong>{{ message.identifiantUser }} ({{ message.emailUser }})</strong>
+                            <p>{{ message.message }}</p>
+                            <em>Envoyé le {{ message.dateEnvoi|date('d/m/Y H:i') }}</em>
+                            <form action="{{ path('app_admin_contact_delete', {id: message.id}) }}" method="post" onsubmit="return confirm('Supprimer ce message ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_contact_' ~ message.id) }}">
+                                <button type="submit">Supprimer</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li>Aucun message de contact pour le moment.</li>
+                    {% endfor %}
+                </ul>
+                {% if pages > 1 %}
+                    <nav class="pagination" aria-label="Pagination des messages">
+                        {% if page > 1 %}
+                            <a href="{{ path('app_admin', {page: page - 1}) }}">Précédent</a>
+                        {% endif %}
+                        <span>Page {{ page }} sur {{ pages }}</span>
+                        {% if page < pages %}
+                            <a href="{{ path('app_admin', {page: page + 1}) }}">Suivant</a>
+                        {% endif %}
+                    </nav>
+                {% endif %}
+            </div>
+        </details>
+    </div>
 </div>
 {% endblock %}
