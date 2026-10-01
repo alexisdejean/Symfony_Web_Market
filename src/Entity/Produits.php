@@ -6,6 +6,7 @@ use App\Repository\ProduitsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitsRepository::class)]
 class Produits
@@ -20,6 +21,7 @@ class Produits
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\PositiveOrZero]
     #[ORM\Column]
     private ?float $prix = null;
 
@@ -41,13 +43,14 @@ class Produits
     #[ORM\Column(length: 255)]
     private ?string $image = null;
 
+    #[Assert\PositiveOrZero]
     #[ORM\Column]
     private ?int $stock = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $date_insertion = null;
 
-    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: PanierContenu::class)]
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: PanierContenu::class, cascade: ['remove'])]
     private Collection $panierContenus;
 
     public function getId(): ?int

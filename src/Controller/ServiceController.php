@@ -80,6 +80,7 @@ final class ServiceController extends AbstractController
 
         $produit = new Produits();
         $produit->setImage('images/default-product.jpg');
+        $produit->setStock(0);
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
@@ -87,6 +88,17 @@ final class ServiceController extends AbstractController
             $imageFile = $form->get('image')->getData();
 
             if ($imageFile instanceof UploadedFile) {
+                if (!$this->isValidImageUpload($imageFile)) {
+                    $this->addFlash('error', 'Le fichier image est invalide. Utilisez un JPEG, PNG ou WebP de moins de 2 Mo.');
+
+                    return $this->render('service/form.html.twig', [
+                        'form' => $form->createView(),
+                        'page_title' => 'Ajouter un produit',
+                        'button_label' => 'Ajouter',
+                        'existing_values' => $this->getFilterValues($produitsRepository),
+                    ]);
+                }
+
                 $produit->setImage($this->uploadImage($imageFile));
             } elseif (empty($produit->getImage())) {
                 $produit->setImage('uploads/products/default-product.svg');
@@ -122,6 +134,10 @@ final class ServiceController extends AbstractController
             throw $this->createNotFoundException('Ce produit n\'existe pas !');
         }
 
+        foreach ($produit->getPanierContenus() as $panierContenu) {
+            $entityManager->remove($panierContenu);
+        }
+
         $entityManager->remove($produit);
         $entityManager->flush();
 
@@ -145,6 +161,17 @@ final class ServiceController extends AbstractController
             $imageFile = $form->get('image')->getData();
 
             if ($imageFile instanceof UploadedFile) {
+                if (!$this->isValidImageUpload($imageFile)) {
+                    $this->addFlash('error', 'Le fichier image est invalide. Utilisez un JPEG, PNG ou WebP de moins de 2 Mo.');
+
+                    return $this->render('service/form.html.twig', [
+                        'form' => $form->createView(),
+                        'page_title' => 'Modifier un produit',
+                        'button_label' => 'Enregistrer',
+                        'existing_values' => $this->getFilterValues($entityManager->getRepository(Produits::class)),
+                    ]);
+                }
+
                 $produit->setImage($this->uploadImage($imageFile));
             } elseif (empty($produit->getImage())) {
                 $produit->setImage('uploads/products/default-product.svg');
@@ -170,14 +197,53 @@ final class ServiceController extends AbstractController
         $targetDirectory = $this->getParameter('kernel.project_dir').'/public/uploads/products';
 
         if (!is_dir($targetDirectory)) {
-            mkdir($targetDirectory, 0777, true);
+            if (!mkdir($targetDirectory, 0755, true) && !is_dir($targetDirectory)) {
+                throw new \RuntimeException('Impossible de préparer le dossier des images.');
+            }
         }
 
-        $extension = $file->guessExtension() ?: 'jpg';
-        $fileName = uniqid().'.'.$extension;
+        $extensionsByMimeType = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+        ];
+        $mimeType = $file->getMimeType();
+        if (!is_string($mimeType) || !isset($extensionsByMimeType[$mimeType])) {
+            throw new \RuntimeException('Extension de fichier non autorisée.');
+        }
+
+        $fileName = bin2hex(random_bytes(16)).'.'.$extensionsByMimeType[$mimeType];
         $file->move($targetDirectory, $fileName);
 
         return 'uploads/products/'.$fileName;
+    }
+
+    private function isValidImageUpload(UploadedFile $file): bool
+    {
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        $mimeType = $file->getMimeType();
+
+        if (!is_string($mimeType) || !in_array($mimeType, $allowedMimeTypes, true)) {
+            return false;
+        }
+
+        $size = $file->getSize();
+        if (!is_int($size) || $size < 1 || $size > 2 * 1024 * 1024) {
+            return false;
+        }
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $detectedMime = $finfo->file($file->getPathname());
+        $imageInfo = @getimagesize($file->getPathname());
+
+        return is_string($detectedMime)
+            && in_array($detectedMime, $allowedMimeTypes, true)
+            && $mimeType === $detectedMime
+            && is_array($imageInfo)
+            && $imageInfo['mime'] === $detectedMime
+            && $imageInfo[0] <= 8000
+            && $imageInfo[1] <= 8000
+            && $imageInfo[0] * $imageInfo[1] <= 40000000;
     }
 
     private function getFilterValues(ProduitsRepository $produitsRepository): array

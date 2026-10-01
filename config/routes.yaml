@@ -13,7 +13,7 @@ about_page:
     controller: App\Controller\AboutController::index
 services_page:
     path: /service
-    controller: App\Controller\ServicesController::index
+    controller: App\Controller\ServiceController::index
 
 contact_page:
     path: /contact
@@ -30,9 +30,6 @@ signup_page:
 logout:
     path: /logout
     controller: App\Controller\SecurityController::logout
-
-profile_edit:
-    path: /profile/edit
-    controller: App\Controller\ProfileController::edit
+    methods: [POST]
 
     

@@ -12,6 +12,7 @@
         {{ form_row(form.nom) }}
         {{ form_row(form.description) }}
         {{ form_row(form.prix) }}
+        {{ form_row(form.stock) }}
         <datalist id="couleur-list">
             {% for value in existing_values.couleur|default([]) %}
                 <option value="{{ value }}">

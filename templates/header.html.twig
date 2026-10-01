@@ -1,6 +1,8 @@
 
 <header class="site-header">
-    <div class="logo"><img src="/logo.png" alt="Logo"></div>
+    <a href="{{ path('home_page') }}" class="logo" aria-label="Accueil">
+        <img src="/logo.png" alt="Logo">
+    </a>
 
     <nav>
         <ul class="menu">
@@ -27,9 +29,9 @@
 
     <div class="header-actions">
         {% if app.user %}
-            <button class="btn-client" onclick="window.location.href='{{ path('app_reglages', {'id_compte': app.user.id}) }}'">Settings</button>
+            <a class="btn-client" href="{{ path('app_reglages', {'id_compte': app.user.id}) }}">Réglages</a>
         {% else %}
-            <button class="btn-client" onclick="window.location.href='{{ path('login_page') }}'">Login</button>
+            <a class="btn-client" href="{{ path('login_page') }}">Connexion</a>
         {% endif %}   
     </div>
 </header>

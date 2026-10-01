@@ -5,6 +5,8 @@
 {% block body %}
     {{ include('header.html.twig') }}
 
+    {% for message in app.flashes('success') %}<div class="alert alert-success" role="status">{{ message }}</div>{% endfor %}
+    {% for message in app.flashes('error') %}<div class="alert alert-danger" role="alert">{{ message }}</div>{% endfor %}
     {{ message_fonctionnel }}
     <h1 class="page-title">Contact</h1> 
     <main class="page-container" id="page_contact">
@@ -18,13 +20,13 @@
             {{ form_end(form) }}
            
         <div class="infos_vendeur">
-        <h2>Titre</h2>
+        <h2>Contacts</h2>
             <ul>
-                <li>Abracadabra</li>
-                <li>Bobidibou</li>
-                <li>Clapipatop</li>
+                <li>Notre équipe est disponible à tout moment</li>
+                <li>02 12 34 56 78</li>
+                <li>contact@glassNGo.com</li>
             </ul>
-            <img src="https://placehold.co/200x200" alt="image_illustration_vendeur">
+            <img src="/logo.png" alt="image_illustration_vendeur">
         </div>
         
     </main>

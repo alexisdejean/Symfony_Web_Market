@@ -10,18 +10,14 @@
             <h1>Paramètres</h1>
             <div class="settings-options">
                 <h3>Modifier mon profil</h3>
-                    <form action="{{ path('profile_edit') }}" method="get">
-                        <input type="hidden" name="userId" value="">
-                        <input type="email" name="email" value="">
-                        <input type="text" name="username" value="">
-                        <input type="text" name="firstName" value="">
-                        <input type="password" name="password" placeholder="Nouveau mot de passe">
-                        <button type="submit">Modifier</button>
-                    </form>
+                <a href="{{ path('app_reglages', {'id_compte': app.user.id}) }}">Modifier mes informations</a>
             </div>
         </div>
         <div class="logout">
-            <button class="btn-client" onclick="window.location.href='{{ path('logout') }}'">Logout</button>
+            <form method="post" action="{{ path('logout') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                <button class="btn-client" type="submit">Déconnexion</button>
+            </form>
         </div>
     </main>
      {{ include('footer.html.twig') }}

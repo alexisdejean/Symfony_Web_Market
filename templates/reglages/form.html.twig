@@ -19,7 +19,10 @@
         {{ form_end(form) }}
 
         <div class="logout">
-            <button class="btn-client" onclick="window.location.href='{{ path('logout') }}'">Logout</button>
+            <form method="post" action="{{ path('logout') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                <button class="btn-client" type="submit">Déconnexion</button>
+            </form>
         </div>
     </main>
 {% endblock %}

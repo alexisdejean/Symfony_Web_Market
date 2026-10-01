@@ -21,7 +21,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->date_inscription = new \DateTimeImmutable();
         $this->status = false;
         $this->role = 0;
-        $this->isVerified = true;
+        $this->isVerified = false;
         $this->contacts = new ArrayCollection();
     }
 
@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    private bool $isVerified = true;
+    private bool $isVerified = false;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom = null;

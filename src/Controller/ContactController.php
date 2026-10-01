@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Contact;
 use App\Entity\User;
 use App\Form\ContactType;
+use App\Security\FileRateLimiter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,8 +28,14 @@ final class ContactController extends AbstractController
     }
 
     #[Route('/contact/submit', name: 'app_contact_submit', methods: ['POST'])]
-    public function submit(Request $request, EntityManagerInterface $entityManager): Response
+    public function submit(Request $request, EntityManagerInterface $entityManager, FileRateLimiter $rateLimiter): Response
     {
+        if (!$rateLimiter->consume('contact', (string) $request->getClientIp(), 5, 3600)) {
+            $this->addFlash('error', 'Trop de messages envoyés. Réessayez plus tard.');
+
+            return $this->redirectToRoute('app_contact');
+        }
+
         $message = new Contact();
         $form = $this->createForm(ContactType::class, $message);
         $form->handleRequest($request);
@@ -50,6 +57,7 @@ final class ContactController extends AbstractController
         $message->setDateEnvoi(new \DateTimeImmutable());
         $entityManager->persist($message);
         $entityManager->flush();
+        $this->addFlash('success', 'Votre message a bien été envoyé.');
 
         return $this->redirectToRoute('app_contact');
     }

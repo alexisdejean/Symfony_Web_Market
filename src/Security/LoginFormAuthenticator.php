@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -26,12 +27,20 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private UserRepository $userRepository,
+        private FileRateLimiter $rateLimiter,
+        #[Autowire('%env(bool:EMAIL_VERIFICATION_ENABLED)%')]
+        private bool $emailVerificationEnabled,
     ) {
     }
 
     public function authenticate(Request $request): Passport
     {
-        $identifiant = $request->getPayload()->getString('identifiant');
+        $identifiant = trim((string) $request->getPayload()->getString('identifiant', ''));
+        $ip = (string) ($request->getClientIp() ?? 'unknown');
+        if (!$this->rateLimiter->consume('login-ip', $ip, 30, 60)
+            || !$this->rateLimiter->consume('login-credentials', $ip.':'.strtolower($identifiant), 5, 300)) {
+            throw new CustomUserMessageAuthenticationException('Trop de tentatives de connexion. Réessayez plus tard.');
+        }
 
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $identifiant);
 
@@ -39,12 +48,8 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             new UserBadge($identifiant, function (string $userIdentifier) {
                 $user = $this->userRepository->findOneBy(['identifiant' => $userIdentifier]);
 
-                if (!$user) {
-                    throw new CustomUserMessageAuthenticationException('Identifiant introuvable.');
-                }
-
-                if ($user->isStatus() === true) {
-                    throw new CustomUserMessageAuthenticationException('Votre compte est désactivé.');
+                if (!$user || $user->isStatus() || ($this->emailVerificationEnabled && !$user->isVerified())) {
+                    throw new CustomUserMessageAuthenticationException('Identifiant ou mot de passe incorrect.');
                 }
 
                 return $user;
@@ -62,8 +67,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // For example:
-        // return new RedirectResponse($this->urlGenerator->generate('some_route'));
         return new RedirectResponse(
             $this->urlGenerator->generate('home_page')
         );
